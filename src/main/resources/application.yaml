@@ -1,0 +1,36 @@
+# Aplicación
+spring:
+  application:
+    name: marketplace
+
+# PostgreSQL
+  datasource:
+    url: jdbc:postgresql://localhost:5432/marketplace_db
+    username: marketplace_user
+    password: marketplace_pass
+    driver-class-name: org.postgresql.Driver
+  
+  # JPA
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+  
+  # Server
+server:
+  port: 8080
+  error:
+    include-message: always
+    include-binding-errors: always
+  
+  # Logging
+logging:
+  level:
+    com.ConectaClick.marketplace: DEBUG
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
