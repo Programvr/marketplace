@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.persistence.autoconfigure.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @SpringBootApplication
 @EnableJpaRepositories(basePackages = {
@@ -11,6 +12,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 })
 @EntityScan(basePackages = {
         "com.ConectaClick.marketplace.infrastructure.persistence.entities"
+})
+@EnableMongoRepositories(basePackages = {
+        "com.ConectaClick.marketplace.infrastructure.nosql.repositories"
 })
 public class MarketplaceApplication {
 

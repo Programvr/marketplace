@@ -61,7 +61,7 @@ public class CreateProductService implements CreateProductUseCase {
     @Override
     public Product execute(CreateProductCommand command) {
         // Inicio del proceso con logging estructurado
-        log.info("🚀 Iniciando creación de producto - Seller ID: {}, Product: {}",
+        log.info(" Iniciando creación de producto - Seller ID: {}, Product: {}",
                 command.sellerId(), command.name());
 
         long startTime = System.currentTimeMillis();
@@ -69,23 +69,23 @@ public class CreateProductService implements CreateProductUseCase {
         try {
             // 1. Validación exhaustiva de datos de entrada
             validateCommand(command);
-            log.debug("✅ Validación de datos exitosa");
+            log.debug(" Validación de datos exitosa");
 
             // 2. Verificar existencia y tipo de usuario vendedor
             User seller = validateAndGetSeller(command.sellerId());
-            log.debug("✅ Vendedor validado - ID: {}, Nombre: {}, Email: {}",
+            log.debug(" Vendedor validado - ID: {}, Nombre: {}, Email: {}",
                     seller.getId(), seller.getName(), seller.getEmail());
 
             // 3. Crear entidad de dominio Product con reglas de negocio
             Product newProduct = createProductEntity(command);
-            log.debug("✅ Entidad Product creada en dominio - Nombre: {}, Precio: {}, Stock: {}",
+            log.debug(" Entidad Product creada en dominio - Nombre: {}, Precio: {}, Stock: {}",
                     newProduct.getName(), newProduct.getPrice(), newProduct.getStock());
 
             // 4. Persistir en PostgreSQL (base de datos transaccional)
             Product savedProduct = productRepositoryPort.save(newProduct);
-            log.info("✅ Producto persistido en PostgreSQL - ID asignado: {}", savedProduct.getId());
+            log.info(" Producto persistido en PostgreSQL - ID asignado: {}", savedProduct.getId());
 
-            // 5. Guardar log en MongoDB (NoSQL para auditoría)
+            // 5. Guardar log en MongoDB
             saveActivityLog(savedProduct, seller);
 
             // 6. Publicar evento para otros microservicios (Spring Events)
@@ -93,7 +93,7 @@ public class CreateProductService implements CreateProductUseCase {
 
             // 7. Registrar métricas y tiempo de ejecución
             long executionTime = System.currentTimeMillis() - startTime;
-            log.info("✅ Producto creado exitosamente en {} ms - ID: {}, Nombre: {}",
+            log.info(" Producto creado exitosamente en {} ms - ID: {}, Nombre: {}",
                     executionTime, savedProduct.getId(), savedProduct.getName());
 
             // 8. Retornar producto para el controlador REST
@@ -101,7 +101,7 @@ public class CreateProductService implements CreateProductUseCase {
 
         } catch (IllegalArgumentException | UserNotFoundException e) {
             // Log de errores de negocio
-            log.error("❌ Error de negocio al crear producto - Command: {}, Error: {}",
+            log.error(" Error de negocio al crear producto - Command: {}, Error: {}",
                     command, e.getMessage());
 
             // Guardar log de error en MongoDB
@@ -115,11 +115,10 @@ public class CreateProductService implements CreateProductUseCase {
             );
 
             throw e;
-
         } catch (Exception e) {
             // Log de errores técnicos no esperados
-            log.error("❌ Error técnico al crear producto - Command: {}, Exception: {}",
-                    command, e.getMessage(), e);
+            log.error(" Error técnico al crear producto - Command: {}, Exception: {}",
+                    command, e.getMessage());
 
             // Guardar log de error crítico en MongoDB
             loggingService.logActivity(
@@ -186,7 +185,7 @@ public class CreateProductService implements CreateProductUseCase {
     }
 
     /**
-     * Valida que el vendedor exista y sea de tipo SELLER
+     * Valida que el vendedor existe y sea de tipo SELLER
      *
      * @param sellerId ID del vendedor a validar
      * @return User objeto del vendedor
@@ -265,7 +264,7 @@ public class CreateProductService implements CreateProductUseCase {
             // Por ahora solo logueamos
         }
 
-        // Regla: Si el stock es 0, el producto se crea como "SIN_STOCK"
+        // Regla: Si el stock es 0, el producto se crea como "IN_STOCK"
         if (stock == 0) {
             log.info("Producto creado con stock inicial cero - Marcado como sin stock");
         }
@@ -295,7 +294,6 @@ public class CreateProductService implements CreateProductUseCase {
             );
 
             log.debug("Log de auditoría guardado en MongoDB - Product ID: {}", savedProduct.getId());
-
         } catch (Exception e) {
             // No falla la creación del producto si falla el log
             log.error("Error al guardar log en MongoDB - Product ID: {}, Error: {}",
@@ -325,7 +323,6 @@ public class CreateProductService implements CreateProductUseCase {
 
             log.info("Evento ProductCreated publicado - Product ID: {}, Event: {}",
                     savedProduct.getId(), event);
-
         } catch (Exception e) {
             // No falla la creación del producto si falla el evento
             log.error("Error al publicar evento ProductCreated - Product ID: {}, Error: {}",

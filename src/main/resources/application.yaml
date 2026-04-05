@@ -1,11 +1,13 @@
 # Aplicación
 spring:
   application:
-    name: marketplace
+    name: marketplace-api
+  profiles:
+    active: docker
 
 # PostgreSQL
   datasource:
-    url: jdbc:postgresql://localhost:5432/marketplace_db
+    url: jdbc:postgresql://postgres:5432/marketplace_db
     username: marketplace_user
     password: marketplace_pass
     driver-class-name: org.postgresql.Driver
@@ -13,24 +15,49 @@ spring:
   # JPA
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     show-sql: true
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
-  
-  # Server
+        default_schema: marketplace
+
+  # MongoDB
+  data:
+    mongodb:
+      uri: mongodb://mongodb:27017/marketplace_logs
+
+  main:
+    allow-circular-references: false
+  jackson:
+    time-zone: America/Bogota
+
+# Configuración de logging
+logging:
+  mongodb:
+    enabled: true  # Cambiar a false para deshabilitar MongoDB logging
+  level:
+    com.ConectaClick.marketplace: DEBUG
+    org.springframework.web: INFO
+    org.springframework.data.mongodb: DEBUG
+
+# Server
 server:
   port: 8080
   error:
     include-message: always
     include-binding-errors: always
   
-  # Logging
-logging:
-  level:
-    com.ConectaClick.marketplace: DEBUG
+# Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
     org.springframework.web: INFO
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
