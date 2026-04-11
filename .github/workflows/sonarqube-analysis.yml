@@ -1,11 +1,11 @@
 name: Analizar código con SonarQube Server
 
 on:
-  workflow_dispatch:  # 🔥 ESTO permite ejecución manual
+  workflow_dispatch:
   push:
-    branches: [ "main" ] # Analiza cuando se sube código a 'main'
+    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ] # Analiza cuando se abre un Pull Request contra 'main'
+    branches: [ "main" ]
     types: [opened, synchronize, reopened]
 
 jobs:
@@ -15,15 +15,38 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        # Es necesario para un análisis preciso de ramas y PRs
         fetch-depth: 0
 
-    # --- Ejemplo para Java con Maven ---
+    # 🔥 CORREGIDO: Java 17 (LTS estable)
     - name: Configurar Java
       uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
-        java-version: 25
+        java-version: '25'  # 
+
+    # 🔍 NUEVO: Verificar versión de Java
+    - name: Verificar Java
+      run: java -version
+
+    # 🔍 NUEVO: Verificar que los secretos existen
+    - name: Verificar secretos
+      run: |
+        if [ -z "${{ secrets.SONAR_TOKEN }}" ]; then
+          echo "❌ ERROR: SONAR_TOKEN no está configurado"
+          exit 1
+        fi
+        if [ -z "${{ secrets.SONAR_HOST_URL }}" ]; then
+          echo "❌ ERROR: SONAR_HOST_URL no está configurado"
+          exit 1
+        fi
+        echo "✅ Secretos configurados correctamente"
+
+    # 🔍 NUEVO: Probar conexión a SonarQube
+    - name: Probar conexión a SonarQube
+      run: |
+        curl -v -u ${{ secrets.SONAR_TOKEN }}: \
+          -H "X-Pinggy-No-Screen: true" \
+          ${{ secrets.SONAR_HOST_URL }}/api/system/status
 
     - name: Cache de SonarQube
       uses: actions/cache@v4
@@ -32,9 +55,12 @@ jobs:
         key: ${{ runner.os }}-sonar
         restore-keys: ${{ runner.os }}-sonar
 
+    # 🔍 NUEVO: Compilar primero (para ver errores de compilación separados)
+    - name: Compilar proyecto
+      run: mvn clean compile -B
+
     - name: Ejecutar análisis de SonarQube
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-      # Este comando ejecuta el análisis. Para Maven
       run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
