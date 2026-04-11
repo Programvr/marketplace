@@ -87,6 +87,190 @@ graph TB
     D --> H
 ```
 
+### 🔄 Flujo del Caso de Uso: CreateProduct
+
+El caso de uso `CreateProduct` sigue un flujo completo para la creación de productos con validaciones exhaustivas:
+
+```mermaid
+sequenceDiagram
+    participant Client as  Cliente
+    participant Controller as  REST Controller
+    participant Service as  Use Case Service
+    participant Domain as  Domain Logic
+    participant PostgreSQL as  PostgreSQL
+    participant MongoDB as  MongoDB
+    participant EventBus as  Event Publisher
+    
+    Client->>Controller: POST /api/v1/products
+    Controller->>Service: execute(CreateProductCommand)
+    
+    Note over Service: 1. Validación Exhaustiva de Datos
+    Service->>Service: validateCommand(command)
+    
+    Note over Service: 2. Verificar Vendedor
+    Service->>PostgreSQL: findById(sellerId)
+    PostgreSQL-->>Service: User Entity
+    
+    Note over Service: 3. Validar Tipo de Usuario
+    Service->>Service: validateSellerType(user)
+    
+    Note over Service: 4. Sanitización de Datos
+    Service->>Service: sanitizeNameAndDescription(command)
+    
+    Note over Service: 5. Validar Reglas de Negocio
+    Service->>Service: validateBusinessRules(price, stock)
+    
+    Note over Service: 6. Crear Entidad de Dominio
+    Service->>Domain: createNew(name, description, price, stock, sellerId)
+    Domain-->>Service: Product Entity
+    
+    Note over Service: 7. Persistir en PostgreSQL
+    Service->>PostgreSQL: save(product)
+    PostgreSQL-->>Service: Saved Product
+    
+    Note over Service: 8. Logging en MongoDB
+    Service->>MongoDB: logActivity(PRODUCT_CREATED)
+    MongoDB-->>Service: Log Saved
+    
+    Note over Service: 9. Publicar Evento
+    Service->>EventBus: publish(ProductCreatedEvent)
+    EventBus-->>Service: Event Published
+    
+    Note over Service: 10. Métricas y Tiempo de Ejecución
+    Service->>Service: logMetrics(executionTime)
+    
+    Service-->>Controller: Created Product
+    Controller-->>Client: 201 Created + Product Response
+```
+
+#### 2.1 Validaciones Implementadas
+
+##### Validación de Datos de Entrada
+```mermaid
+flowchart TD
+    A[CreateProductCommand] --> B{Nombre válido?}
+    B -->|No| C[Error: Nombre obligatorio]
+    B -->|Sí| D{Longitud <= 200?}
+    D -->|No| E[Error: Nombre muy largo]
+    D -->|Sí| F{Precio válido?}
+    F -->|No| G[Error: Precio obligatorio]
+    F -->|Sí| H{Precio >= 0.01?}
+    H -->|No| I[Error: Precio mínimo]
+    H -->|Sí| J{Precio <= 2 decimales?}
+    J -->|No| K[Error: Demasiados decimales]
+    J -->|Sí| L{Stock válido?}
+    L -->|No| M[Error: Stock obligatorio]
+    L -->|Sí| N{Stock >= 0?}
+    N -->|No| O[Error: Stock negativo]
+    N -->|Sí| P{SellerId válido?}
+    P -->|No| Q[Error: ID inválido]
+    P -->|Sí| R[Validación OK]
+    
+    style A fill:#e3f2fd
+    style R fill:#c8e6c9
+    style C fill:#ffcdd2
+    style E fill:#ffcdd2
+    style G fill:#ffcdd2
+    style I fill:#ffcdd2
+    style K fill:#ffcdd2
+    style M fill:#ffcdd2
+    style O fill:#ffcdd2
+    style Q fill:#ffcdd2
+```
+
+##### Validación de Usuario Vendedor
+```mermaid
+sequenceDiagram
+    participant Service as  Use Case Service
+    participant PostgreSQL as  PostgreSQL
+    participant Domain as  Domain Logic
+    
+    Service->>PostgreSQL: findById(sellerId)
+    alt Usuario no encontrado
+        PostgreSQL-->>Service: null
+        Service-->>Domain: UserNotFoundException
+    else Usuario encontrado
+        PostgreSQL-->>Service: User Entity
+        Service->>Service: isSeller()?
+        alt No es vendedor
+            Service-->>Domain: IllegalArgumentException
+        else Es vendedor
+            Service->>Service: continue
+        end
+    end
+```
+
+#### 2.2 Reglas de Negocio Específicas
+
+##### Reglas de Validación
+- **Precio Mínimo**: $0.01 (no permite productos gratuitos)
+- **Precio Máximo sin Aprobación**: $1,000,000 (productos de lujo requieren aprobación especial)
+- **Longitud Máxima Nombre**: 200 caracteres
+- **Stock Inicial**: No puede ser negativo
+- **Tipo de Usuario**: Solo usuarios de tipo SELLER pueden crear productos
+
+##### Sanitización de Datos
+```java
+// Sanitización de nombre
+String sanitizedName = name.trim().replaceAll("\\s+", " ");
+
+// Sanitización de descripción
+String sanitizedDescription = description.trim();
+```
+
+##### Monitoreo y Métricas
+```java
+long startTime = System.currentTimeMillis();
+// ... lógica del caso de uso ...
+long executionTime = System.currentTimeMillis() - startTime;
+log.info("Producto creado en {} ms", executionTime);
+```
+
+#### 2.3 Manejo de Errores
+
+##### Errores de Negocio
+- **IllegalArgumentException**: Datos inválidos
+- **UserNotFoundException**: Vendedor no existe
+- **Logging estructurado**: Todos los errores se registran en MongoDB
+
+##### Errores Técnicos
+- **RuntimeException**: Errores inesperados con fallback
+- **Logging de error crítico**: Se registra en MongoDB con nivel ERROR
+- **Mensaje amigable**: Se retorna mensaje genérico al cliente
+
+#### 2.4 Eventos y Logging
+
+##### Eventos Publicados
+```java
+ProductCreatedEvent.builder()
+    .productId(savedProduct.getId())
+    .productName(savedProduct.getName())
+    .price(savedProduct.getPrice())
+    .stock(savedProduct.getStock())
+    .sellerId(savedProduct.getSellerId())
+    .sellerName(seller.getName())
+    .sellerEmail(seller.getEmail())
+    .createdAt(LocalDateTime.now())
+    .eventType("PRODUCT_CREATED")
+    .source("marketplace-api")
+    .build();
+```
+
+##### Logs en MongoDB
+- **PRODUCT_CREATED**: Creación exitosa
+- **PRODUCT_CREATION_FAILED**: Error de negocio
+- **PRODUCT_CREATION_ERROR**: Error técnico
+
+#### 2.5 Características del Caso de Uso
+
+- **Transaccional**: @Transactional asegura consistencia
+- **Validación Robusta**: Múltiples capas de validación
+- **Logging Completo**: Auditoría en MongoDB
+- **Eventos Desacoplados**: Spring Events para microservicios
+- **Métricas de Rendimiento**: Tiempo de ejecución
+- **Sanitización de Datos**: Limpieza de entrada
+- **Manejo de Errores**: Diferenciado por tipo
+
 ### 🔄 Flujo del Caso de Uso: UpdateProductStock
 
 El caso de uso `UpdateProductStock` sigue un flujo completo y robusto:
@@ -132,6 +316,61 @@ sequenceDiagram
     
     Service-->>Controller: Updated Product
     Controller-->>Client: 200 OK + Product Response
+```
+
+### 🔄 Flujo del Caso de Uso: GetSellerProducts
+
+El caso de uso `GetSellerProducts` permite obtener productos de un vendedor con filtros avanzados y caching:
+
+```mermaid
+sequenceDiagram
+    participant Client as 📱 Cliente
+    participant Controller as 🌐 REST Controller
+    participant Service as ⚙️ Use Case Service
+    participant Cache as 📈 Redis Cache
+    participant PostgreSQL as 🐘 PostgreSQL
+    participant Auth as 🔒 Authorization
+    
+    Client->>Controller: GET /sellers/{id}/products
+    Controller->>Service: getSellerProducts(sellerId, userId, page, size)
+    
+    Note over Service: 1. Validación de Datos
+    Service->>Service: validateInput(sellerId, userId, page, size)
+    
+    Note over Service: 2. Verificar Vendedor
+    Service->>PostgreSQL: findById(sellerId)
+    PostgreSQL-->>Service: User Entity
+    
+    Note over Service: 3. Validar Autorización
+    Service->>Auth: validateAuthorization(sellerId, userId)
+    Auth-->>Service: Authorized
+    
+    Note over Service: 4. Generar Cache Key
+    Service->>Service: generateCacheKey(sellerId, page, size, filters)
+    
+    Note over Service: 5. Intentar Cache Hit
+    Service->>Cache: get(cacheKey)
+    alt Cache Hit
+        Cache-->>Service: PagedProductResponse
+        Service-->>Controller: Cached Response
+    else Cache Miss
+        Note over Service: 6. Consultar PostgreSQL
+        Service->>PostgreSQL: findBySellerId(sellerId, page, size)
+        PostgreSQL-->>Service: List<Product>
+        
+        Note over Service: 7. Convertir a DTOs
+        Service->>Service: convertToDTO(products)
+        
+        Note over Service: 8. Construir Respuesta Paginada
+        Service->>Service: buildPagedResponse(products, page, size, total)
+        
+        Note over Service: 9. Cachear Resultados
+        Service->>Cache: put(cacheKey, response, TTL)
+        
+        Service-->>Controller: Fresh Response
+    end
+    
+    Controller-->>Client: 200 OK + PagedProductResponse
 ```
 
 ## 📋 Requisitos Previos
@@ -417,6 +656,116 @@ GET /api/v1/products?page=0&size=10&sort=createdAt,desc
   "last": true
 }
 ```
+## Vendedores y Productos
+
+### 1. Obtener Productos del Vendedor
+
+```bash
+GET /api/v1/sellers/{sellerId}/products
+X-User-Id: {requestingUserId}
+```
+
+#### Headers:
+- `X-User-Id`: ID del usuario que solicita (obligatorio para autorización)
+
+#### Query Parameters:
+- `page`: Número de página (default: 0)
+- `size`: Tamaño de página (default: 10, máximo: 100)
+
+#### Response (200 OK):
+```json
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "Laptop Gaming",
+      "description": "High performance gaming laptop",
+      "price": 1299.99,
+      "stock": 15,
+      "sellerId": 1,
+      "status": "ACTIVE",
+      "createdAt": "2026-03-31T12:00:00",
+      "updatedAt": "2026-03-31T14:30:00"
+    }
+  ],
+  "currentPage": 0,
+  "pageSize": 10,
+  "totalItems": 1,
+  "totalPages": 1,
+  "hasNext": false,
+  "hasPrevious": false
+}
+```
+
+#### Ejemplo de uso:
+```bash
+curl -X GET "http://localhost:8080/api/v1/sellers/1/products?page=0&size=5" \
+  -H "X-User-Id: 1"
+```
+
+### 2. Obtener Productos del Vendedor por Estado
+
+```bash
+GET /api/v1/sellers/{sellerId}/products/by-status?status={status}
+X-User-Id: {requestingUserId}
+```
+
+#### Query Parameters:
+- `status`: Estado del producto (ACTIVE, INACTIVE, DELETED)
+- `page`: Número de página (default: 0)
+- `size`: Tamaño de página (default: 10)
+
+#### Ejemplo de uso:
+```bash
+curl -X GET "http://localhost:8080/api/v1/sellers/1/products/by-status?status=ACTIVE&page=0&size=5" \
+  -H "X-User-Id: 1"
+```
+
+### 3. Obtener Productos del Vendedor por Rango de Precios
+
+```bash
+GET /api/v1/sellers/{sellerId}/products/by-price-range?minPrice={min}&maxPrice={max}
+X-User-Id: {requestingUserId}
+```
+
+#### Query Parameters:
+- `minPrice`: Precio mínimo (obligatorio, >= 0)
+- `maxPrice`: Precio máximo (obligatorio, >= minPrice)
+- `page`: Número de página (default: 0)
+- `size`: Tamaño de página (default: 10)
+
+#### Ejemplo de uso:
+```bash
+curl -X GET "http://localhost:8080/api/v1/sellers/1/products/by-price-range?minPrice=100&maxPrice=1000&page=0&size=5" \
+  -H "X-User-Id: 1"
+```
+
+### 4. Obtener Productos del Vendedor por Rango de Fechas
+
+```bash
+GET /api/v1/sellers/{sellerId}/products/by-date-range?startDate={start}&endDate={end}
+X-User-Id: {requestingUserId}
+```
+
+#### Query Parameters:
+- `startDate`: Fecha de inicio (ISO DateTime, obligatorio)
+- `endDate`: Fecha de fin (ISO DateTime, obligatorio, >= startDate)
+- `page`: Número de página (default: 0)
+- `size`: Tamaño de página (default: 10)
+
+#### Ejemplo de uso:
+```bash
+curl -X GET "http://localhost:8080/api/v1/sellers/1/products/by-date-range?startDate=2026-03-01T00:00:00&endDate=2026-03-31T23:59:59&page=0&size=5" \
+  -H "X-User-Id: 1"
+```
+
+#### Errores comunes:
+- `400 Bad Request`: Parámetros inválidos (page < 0, size > 100, etc.)
+- `401 Unauthorized`: Header X-User-Id faltante
+- `403 Forbidden`: Usuario no autorizado (solo puede ver sus propios productos)
+- `404 Not Found`: Vendedor no encontrado
+- `422 Unprocessable Entity`: Parámetros de filtro inválidos (rango de precios/fechas incorrecto)
+
 ## 📁 Estructura del Proyecto
 
 ```mermaid
@@ -711,11 +1060,34 @@ docker-compose restart postgres
 - ✅ Publicación de evento `StockUpdated`
 - ✅ Endpoint REST `PATCH /api/v1/products/{id}/stock`
 
+#### 3. **GetSellerProductsUseCase** - Obtener Productos de Vendedor
+- ✅ Validación completa de datos de entrada (sellerId, requestingUserId, paginación)
+- ✅ Verificación de existencia del vendedor
+- ✅ Validación de autorización granular (solo propietario puede ver sus productos)
+- ✅ Caching inteligente con Redis (TTL 5 minutos)
+- ✅ Múltiples filtros: por estado, rango de precios, rango de fechas
+- ✅ Paginación eficiente (máx 100 items por página)
+- ✅ Transformación de entidades a DTOs
+- ✅ Construcción de respuestas paginadas con metadatos
+- ✅ 4 endpoints REST especializados
+- ✅ Métricas de rendimiento optimizadas
+
 ### 🔄 Flujo de Datos
 
-```
-Request REST → Validation → Domain Logic → PostgreSQL → MongoDB Logging → Event Publishing → Response
-```
+```mermaid
+flowchart LR
+    A[📱 Request REST] --> B[🌐 Web Layer]
+    B --> C[⚙️ Application Layer]
+    C --> D[🏗 Domain Layer]
+    C --> E[🐘 PostgreSQL]
+    C --> F[🍃 MongoDB]
+    
+    style A fill:#e3f2fd
+    style B fill:#2196f3
+    style C fill:#4caf50
+    style D fill:#ff9800
+    style E fill:#3f51b5
+    style F fill:#00bcd4
 
 ### 📝 Logs y Auditoría
 
