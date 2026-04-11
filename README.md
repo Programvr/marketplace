@@ -907,7 +907,7 @@ flowchart LR
     style C fill:#4caf50
     style D fill:#ff9800
     style E fill:#3f51b5
-    style F fill:#00bcd4
+    style F fill:#4caf50
 ```
 
 ### 📋 Patrón Arquitectónico
