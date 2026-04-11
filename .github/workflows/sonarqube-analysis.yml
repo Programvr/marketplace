@@ -1,0 +1,40 @@
+name: Analizar código con SonarQube Server
+
+on:
+  workflow_dispatch:  # 🔥 ESTO permite ejecución manual
+  push:
+    branches: [ "main" ] # Analiza cuando se sube código a 'main'
+  pull_request:
+    branches: [ "main" ] # Analiza cuando se abre un Pull Request contra 'main'
+    types: [opened, synchronize, reopened]
+
+jobs:
+  sonarqube:
+    name: Ejecutar Análisis
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        # Es necesario para un análisis preciso de ramas y PRs
+        fetch-depth: 0
+
+    # --- Ejemplo para Java con Maven ---
+    - name: Configurar Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: 25
+
+    - name: Cache de SonarQube
+      uses: actions/cache@v4
+      with:
+        path: ~/.sonar/cache
+        key: ${{ runner.os }}-sonar
+        restore-keys: ${{ runner.os }}-sonar
+
+    - name: Ejecutar análisis de SonarQube
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      # Este comando ejecuta el análisis. Para Maven
+      run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
