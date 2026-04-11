@@ -65,6 +65,17 @@
             <artifactId>mongodb-driver-sync</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        
+        <!-- Dependencia adicional para Redis si es necesaria -->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-redis</artifactId>
+        </dependency>
+
         <!-- PostgreSQL -->
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -91,6 +102,12 @@
             <artifactId>mapstruct-processor</artifactId>
             <version>${mapstruct.version}</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- Jackson for JSON processing -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
         </dependency>
 
         <!-- Testing -->

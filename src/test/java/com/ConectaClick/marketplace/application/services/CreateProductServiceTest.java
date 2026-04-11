@@ -6,6 +6,7 @@ import com.ConectaClick.marketplace.domain.exceptions.UserNotFoundException;
 import com.ConectaClick.marketplace.domain.ports.inbound.CreateProductUseCase;
 import com.ConectaClick.marketplace.domain.ports.outbound.ProductRepositoryPort;
 import com.ConectaClick.marketplace.domain.ports.outbound.UserRepositoryPort;
+import com.ConectaClick.marketplace.infrastructure.nosql.services.LoggingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,6 +30,9 @@ class CreateProductServiceTest {
 
     @Mock
     private ProductRepositoryPort productRepositoryPort;
+
+    @Mock
+    private LoggingService loggingService;
 
     @InjectMocks
     private CreateProductService createProductService;
@@ -107,7 +111,7 @@ class CreateProductServiceTest {
         // When & Then
         assertThatThrownBy(() -> createProductService.execute(validCommand))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("is not a seller");
+                .hasMessageContaining("no tiene permisos de vendedor");
 
         verify(productRepositoryPort, never()).save(any(Product.class));
     }
@@ -121,7 +125,7 @@ class CreateProductServiceTest {
         // When & Then
         assertThatThrownBy(() -> createProductService.execute(invalidCommand))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Price must be greater than zero");
+                .hasMessageContaining("El precio debe ser mayor a 0,01");
     }
 
     @Test
@@ -133,6 +137,6 @@ class CreateProductServiceTest {
         // When & Then
         assertThatThrownBy(() -> createProductService.execute(invalidCommand))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Stock cannot be negative");
+                .hasMessageContaining("El stock no puede ser negativo");
     }
 }
