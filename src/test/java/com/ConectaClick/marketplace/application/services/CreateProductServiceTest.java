@@ -125,7 +125,7 @@ class CreateProductServiceTest {
         // When & Then
         assertThatThrownBy(() -> createProductService.execute(invalidCommand))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("El precio debe ser mayor a 0,01");
+                .hasMessageMatching("El precio debe ser mayor a 0[.,]01");
     }
 
     @Test
