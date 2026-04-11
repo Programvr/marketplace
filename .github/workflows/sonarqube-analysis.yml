@@ -1,6 +1,7 @@
 name: Analizar código con SonarQube Server
 
 on:
+  workflow_dispatch:  # 🔥 ESTO permite ejecución manual
   push:
     branches: [ "main" ] # Analiza cuando se sube código a 'main'
   pull_request:
