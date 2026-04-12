@@ -174,4 +174,101 @@ class JwtAuthenticationFilterTest {
         verify(jwtTokenUtil).getUsernameFromToken("");
         verify(jwtTokenUtil, never()).validateToken(any());
     }
+
+    @Test
+    void shouldHandleNullToken() throws ServletException, IOException {
+        // Given
+        when(request.getHeader("Authorization")).thenReturn("Bearer null");
+        when(jwtTokenUtil.getUsernameFromToken("null")).thenReturn(null);
+
+        // When
+        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
+
+        // Then
+        verify(filterChain).doFilter(request, response);
+        verify(jwtTokenUtil).getUsernameFromToken("null");
+        verify(jwtTokenUtil, never()).validateToken(any());
+    }
+
+    @Test
+    void shouldHandleExceptionInGetUsernameFromToken() throws ServletException, IOException {
+        // Given
+        String invalidToken = "invalid.jwt.token";
+        when(request.getHeader("Authorization")).thenReturn("Bearer " + invalidToken);
+        when(jwtTokenUtil.getUsernameFromToken(invalidToken))
+                .thenThrow(new RuntimeException("Token parsing error"));
+
+        // When
+        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
+
+        // Then
+        verify(filterChain).doFilter(request, response);
+        verify(jwtTokenUtil).getUsernameFromToken(invalidToken);
+        verify(jwtTokenUtil, never()).validateToken(any());
+    }
+
+    @Test
+    void shouldHandleExpiredToken() throws ServletException, IOException {
+        // Given
+        String expiredToken = "expired.jwt.token";
+        String username = "testuser";
+        
+        when(request.getHeader("Authorization")).thenReturn("Bearer " + expiredToken);
+        when(jwtTokenUtil.getUsernameFromToken(expiredToken)).thenReturn(username);
+        when(jwtTokenUtil.validateToken(expiredToken)).thenReturn(false);
+
+        // When
+        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
+
+        // Then
+        verify(filterChain).doFilter(request, response);
+        verify(jwtTokenUtil).getUsernameFromToken(expiredToken);
+        verify(jwtTokenUtil).validateToken(expiredToken);
+        
+        // Verify authentication is NOT set in context
+        assert SecurityContextHolder.getContext().getAuthentication() == null;
+    }
+
+    @Test
+    void shouldHandleMalformedToken() throws ServletException, IOException {
+        // Given
+        String malformedToken = "not.a.valid.jwt";
+        when(request.getHeader("Authorization")).thenReturn("Bearer " + malformedToken);
+        when(jwtTokenUtil.getUsernameFromToken(malformedToken)).thenReturn(null);
+
+        // When
+        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
+
+        // Then
+        verify(filterChain).doFilter(request, response);
+        verify(jwtTokenUtil).getUsernameFromToken(malformedToken);
+        verify(jwtTokenUtil, never()).validateToken(any());
+        
+        // Verify authentication is NOT set in context
+        assert SecurityContextHolder.getContext().getAuthentication() == null;
+    }
+
+    @Test
+    void shouldHandleTokenWithSpecialCharacters() throws ServletException, IOException {
+        // Given
+        String tokenWithSpecialChars = "token.with.special.chars.123";
+        String username = "specialuser";
+        
+        when(request.getHeader("Authorization")).thenReturn("Bearer " + tokenWithSpecialChars);
+        when(jwtTokenUtil.getUsernameFromToken(tokenWithSpecialChars)).thenReturn(username);
+        when(jwtTokenUtil.validateToken(tokenWithSpecialChars)).thenReturn(true);
+        when(request.getRemoteAddr()).thenReturn("192.168.1.1");
+
+        // When
+        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
+
+        // Then
+        verify(filterChain).doFilter(request, response);
+        verify(jwtTokenUtil).getUsernameFromToken(tokenWithSpecialChars);
+        verify(jwtTokenUtil).validateToken(tokenWithSpecialChars);
+        
+        // Verify authentication is set in context
+        assert SecurityContextHolder.getContext().getAuthentication() != null;
+        assert SecurityContextHolder.getContext().getAuthentication().getName().equals(username);
+    }
 }
