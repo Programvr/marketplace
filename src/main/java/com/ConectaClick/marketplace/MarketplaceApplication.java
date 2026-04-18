@@ -8,13 +8,13 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 @SpringBootApplication
 @EnableJpaRepositories(basePackages = {
-        "com.ConectaClick.marketplace.infrastructure.persistence.repositories"
+        "com.conectaclick.marketplace.infrastructure.persistence.repositories"
 })
 @EntityScan(basePackages = {
-        "com.ConectaClick.marketplace.infrastructure.persistence.entities"
+        "com.conectaclick.marketplace.infrastructure.persistence.entities"
 })
 @EnableMongoRepositories(basePackages = {
-        "com.ConectaClick.marketplace.infrastructure.nosql.repositories"
+        "com.conectaclick.marketplace.infrastructure.nosql.repositories"
 })
 public class MarketplaceApplication {
 
