@@ -15,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -318,5 +319,84 @@ class JwtAuthenticationFilterTest {
         verify(filterChain).doFilter(request, response);
         verify(jwtTokenUtil).getUsernameFromToken(token);
         verify(jwtTokenUtil, never()).validateToken(any());
+    }
+
+    @Test
+    void shouldHandleBearerWithSpaces() throws ServletException, IOException {
+        // Given
+        when(request.getHeader("Authorization")).thenReturn("Bearer    token123");
+        when(jwtTokenUtil.getUsernameFromToken("   token123")).thenReturn(null);
+
+        // When
+        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
+
+        // Then
+        verify(filterChain).doFilter(request, response);
+        verify(jwtTokenUtil).getUsernameFromToken("   token123");
+        verify(jwtTokenUtil, never()).validateToken(any());
+    }
+
+    @Test
+    void shouldHandleCaseInsensitiveBearer() throws ServletException, IOException {
+        // Given
+        when(request.getHeader("Authorization")).thenReturn("bearer token123");
+
+        // When
+        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
+
+        // Then
+        verify(filterChain).doFilter(request, response);
+        verify(jwtTokenUtil, never()).getUsernameFromToken(any());
+        verify(jwtTokenUtil, never()).validateToken(any());
+    }
+
+    @Test
+    void shouldSetAuthenticationWithCorrectAuthorities() throws ServletException, IOException {
+        // Given
+        String validToken = "valid.jwt.token";
+        String username = "testuser";
+        
+        when(request.getHeader("Authorization")).thenReturn("Bearer " + validToken);
+        when(jwtTokenUtil.getUsernameFromToken(validToken)).thenReturn(username);
+        when(jwtTokenUtil.validateToken(validToken)).thenReturn(true);
+
+        // When
+        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
+
+        // Then
+        verify(filterChain).doFilter(request, response);
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        assertNotNull(auth);
+        assertEquals(username, auth.getName());
+        assertTrue(auth.getAuthorities().isEmpty()); // User has no authorities
+        assertTrue(auth.isAuthenticated());
+    }
+
+    @Test
+    void shouldPreserveExistingAuthenticationWhenTokenInvalid() throws ServletException, IOException {
+        // Given
+        String invalidToken = "invalid.jwt.token";
+        String username = "testuser";
+        
+        // Pre-authenticate user
+        UsernamePasswordAuthenticationToken existingAuth = 
+                new UsernamePasswordAuthenticationToken("existinguser", null, null);
+        SecurityContextHolder.getContext().setAuthentication(existingAuth);
+        
+        when(request.getHeader("Authorization")).thenReturn("Bearer " + invalidToken);
+        when(jwtTokenUtil.getUsernameFromToken(invalidToken)).thenReturn(username);
+        // validateToken is not called when user is already authenticated
+
+        // When
+        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
+
+        // Then
+        verify(filterChain).doFilter(request, response);
+        verify(jwtTokenUtil).getUsernameFromToken(invalidToken);
+        verify(jwtTokenUtil, never()).validateToken(invalidToken);
+        
+        // Verify existing authentication is preserved
+        assert SecurityContextHolder.getContext().getAuthentication() == existingAuth;
+        assert SecurityContextHolder.getContext().getAuthentication().getName().equals("existinguser");
     }
 }
