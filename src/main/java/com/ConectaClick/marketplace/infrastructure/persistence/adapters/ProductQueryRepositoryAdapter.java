@@ -1,11 +1,11 @@
-package com.ConectaClick.marketplace.infrastructure.persistence.adapters;
+package com.conectaclick.marketplace.infrastructure.persistence.adapters;
 
-import com.ConectaClick.marketplace.domain.model.Product;
-import com.ConectaClick.marketplace.domain.model.Product.ProductStatus;
-import com.ConectaClick.marketplace.domain.ports.outbound.ProductQueryRepositoryPort;
-import com.ConectaClick.marketplace.infrastructure.persistence.entities.ProductEntity;
-import com.ConectaClick.marketplace.infrastructure.persistence.mappers.ProductPersistenceMapper;
-import com.ConectaClick.marketplace.infrastructure.persistence.repositories.JpaProductRepository;
+import com.conectaclick.marketplace.domain.model.Product;
+import com.conectaclick.marketplace.domain.model.Product.ProductStatus;
+import com.conectaclick.marketplace.domain.ports.outbound.ProductQueryRepositoryPort;
+import com.conectaclick.marketplace.infrastructure.persistence.entities.ProductEntity;
+import com.conectaclick.marketplace.infrastructure.persistence.mappers.ProductPersistenceMapper;
+import com.conectaclick.marketplace.infrastructure.persistence.repositories.JpaProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -44,8 +44,8 @@ public class ProductQueryRepositoryAdapter implements ProductQueryRepositoryPort
         
         Pageable pageable = PageRequest.of(page, size);
         // Convertir ProductStatus de dominio a infraestructura
-        com.ConectaClick.marketplace.infrastructure.persistence.entities.enums.ProductStatus infrastructureStatus = 
-                com.ConectaClick.marketplace.infrastructure.persistence.entities.enums.ProductStatus.valueOf(status.name());
+        com.conectaclick.marketplace.infrastructure.persistence.entities.enums.ProductStatus infrastructureStatus =
+                com.conectaclick.marketplace.infrastructure.persistence.entities.enums.ProductStatus.valueOf(status.name());
         List<ProductEntity> entities = jpaProductRepository.findBySellerIdAndStatus(sellerId, infrastructureStatus, pageable);
         
         return entities.stream()
@@ -91,8 +91,8 @@ public class ProductQueryRepositoryAdapter implements ProductQueryRepositoryPort
     public long countBySellerIdAndStatus(Long sellerId, ProductStatus status) {
         log.debug("Counting products for seller {} with status {}", sellerId, status);
         // Convertir ProductStatus de dominio a infraestructura
-        com.ConectaClick.marketplace.infrastructure.persistence.entities.enums.ProductStatus infrastructureStatus = 
-                com.ConectaClick.marketplace.infrastructure.persistence.entities.enums.ProductStatus.valueOf(status.name());
+        com.conectaclick.marketplace.infrastructure.persistence.entities.enums.ProductStatus infrastructureStatus =
+                com.conectaclick.marketplace.infrastructure.persistence.entities.enums.ProductStatus.valueOf(status.name());
         return jpaProductRepository.countBySellerIdAndStatus(sellerId, infrastructureStatus);
     }
 

@@ -1,4 +1,4 @@
-package com.ConectaClick.marketplace.infrastructure.nosql.entities;
+package com.conectaclick.marketplace.infrastructure.nosql.entities;
 
 import lombok.Builder;
 import lombok.Data;

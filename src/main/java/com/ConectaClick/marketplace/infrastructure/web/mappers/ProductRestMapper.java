@@ -1,9 +1,9 @@
-package com.ConectaClick.marketplace.infrastructure.web.mappers;
+package com.conectaclick.marketplace.infrastructure.web.mappers;
 
-import com.ConectaClick.marketplace.domain.model.Product;
-import com.ConectaClick.marketplace.infrastructure.web.dto.CreateProductRequest;
-import com.ConectaClick.marketplace.infrastructure.web.dto.ProductResponse;
-import com.ConectaClick.marketplace.domain.ports.inbound.CreateProductUseCase;
+import com.conectaclick.marketplace.domain.model.Product;
+import com.conectaclick.marketplace.infrastructure.web.dto.CreateProductRequest;
+import com.conectaclick.marketplace.infrastructure.web.dto.ProductResponse;
+import com.conectaclick.marketplace.domain.ports.inbound.CreateProductUseCase;
 import org.springframework.stereotype.Component;
 
 @Component

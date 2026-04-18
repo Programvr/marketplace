@@ -1,4 +1,4 @@
-package com.ConectaClick.marketplace.domain.model;
+package com.conectaclick.marketplace.domain.model;
 
 import lombok.Builder;
 import lombok.Getter;

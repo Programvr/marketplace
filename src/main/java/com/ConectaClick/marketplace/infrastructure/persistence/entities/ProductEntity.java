@@ -1,6 +1,6 @@
-package com.ConectaClick.marketplace.infrastructure.persistence.entities;
+package com.conectaclick.marketplace.infrastructure.persistence.entities;
 
-import com.ConectaClick.marketplace.infrastructure.persistence.entities.enums.ProductStatus;
+import com.conectaclick.marketplace.infrastructure.persistence.entities.enums.ProductStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

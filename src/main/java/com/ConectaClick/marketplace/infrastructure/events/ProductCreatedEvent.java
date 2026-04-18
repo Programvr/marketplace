@@ -1,4 +1,4 @@
-package com.ConectaClick.marketplace.infrastructure.events;
+package com.conectaclick.marketplace.infrastructure.events;
 
 import lombok.Builder;
 import lombok.Data;

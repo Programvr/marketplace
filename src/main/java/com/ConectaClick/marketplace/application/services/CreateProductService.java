@@ -1,13 +1,13 @@
-package com.ConectaClick.marketplace.application.services;
+package com.conectaclick.marketplace.application.services;
 
-import com.ConectaClick.marketplace.domain.model.Product;
-import com.ConectaClick.marketplace.domain.model.User;
-import com.ConectaClick.marketplace.domain.exceptions.UserNotFoundException;
-import com.ConectaClick.marketplace.domain.ports.inbound.CreateProductUseCase;
-import com.ConectaClick.marketplace.domain.ports.outbound.ProductRepositoryPort;
-import com.ConectaClick.marketplace.domain.ports.outbound.UserRepositoryPort;
-import com.ConectaClick.marketplace.infrastructure.events.ProductCreatedEvent;
-import com.ConectaClick.marketplace.infrastructure.nosql.services.LoggingService;
+import com.conectaclick.marketplace.domain.model.Product;
+import com.conectaclick.marketplace.domain.model.User;
+import com.conectaclick.marketplace.domain.exceptions.UserNotFoundException;
+import com.conectaclick.marketplace.domain.ports.inbound.CreateProductUseCase;
+import com.conectaclick.marketplace.domain.ports.outbound.ProductRepositoryPort;
+import com.conectaclick.marketplace.domain.ports.outbound.UserRepositoryPort;
+import com.conectaclick.marketplace.infrastructure.events.ProductCreatedEvent;
+import com.conectaclick.marketplace.infrastructure.nosql.services.LoggingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;

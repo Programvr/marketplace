@@ -1,4 +1,4 @@
-package com.ConectaClick.marketplace.application.dto;
+package com.conectaclick.marketplace.application.dto;
 
 import lombok.Builder;
 import lombok.Getter;

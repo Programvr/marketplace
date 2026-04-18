@@ -1,4 +1,4 @@
-package com.ConectaClick.marketplace.infrastructure.security;
+package com.conectaclick.marketplace.infrastructure.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

@@ -1,12 +1,12 @@
-package com.ConectaClick.marketplace.infrastructure.web.controllers;
+package com.conectaclick.marketplace.infrastructure.web.controllers;
 
-import com.ConectaClick.marketplace.domain.model.Product;
-import com.ConectaClick.marketplace.domain.ports.inbound.CreateProductUseCase;
-import com.ConectaClick.marketplace.domain.ports.inbound.UpdateProductStockUseCase;
-import com.ConectaClick.marketplace.infrastructure.web.dto.CreateProductRequest;
-import com.ConectaClick.marketplace.infrastructure.web.dto.ProductResponse;
-import com.ConectaClick.marketplace.infrastructure.web.dto.UpdateStockRequest;
-import com.ConectaClick.marketplace.infrastructure.web.mappers.ProductRestMapper;
+import com.conectaclick.marketplace.domain.model.Product;
+import com.conectaclick.marketplace.domain.ports.inbound.CreateProductUseCase;
+import com.conectaclick.marketplace.domain.ports.inbound.UpdateProductStockUseCase;
+import com.conectaclick.marketplace.infrastructure.web.dto.CreateProductRequest;
+import com.conectaclick.marketplace.infrastructure.web.dto.ProductResponse;
+import com.conectaclick.marketplace.infrastructure.web.dto.UpdateStockRequest;
+import com.conectaclick.marketplace.infrastructure.web.mappers.ProductRestMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

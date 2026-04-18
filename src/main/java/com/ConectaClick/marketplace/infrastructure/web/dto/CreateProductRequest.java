@@ -1,4 +1,4 @@
-package com.ConectaClick.marketplace.infrastructure.web.dto;
+package com.conectaclick.marketplace.infrastructure.web.dto;
 
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;

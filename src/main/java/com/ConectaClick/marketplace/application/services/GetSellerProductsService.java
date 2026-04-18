@@ -1,15 +1,15 @@
-package com.ConectaClick.marketplace.application.services;
+package com.conectaclick.marketplace.application.services;
 
-import com.ConectaClick.marketplace.application.dto.PagedProductResponse;
-import com.ConectaClick.marketplace.application.dto.ProductDTO;
-import com.ConectaClick.marketplace.domain.model.Product;
-import com.ConectaClick.marketplace.domain.model.User;
-import com.ConectaClick.marketplace.domain.exceptions.UserNotFoundException;
-import com.ConectaClick.marketplace.domain.exceptions.UnauthorizedAccessException;
-import com.ConectaClick.marketplace.domain.ports.inbound.GetSellerProductsUseCase;
-import com.ConectaClick.marketplace.domain.ports.outbound.CachePort;
-import com.ConectaClick.marketplace.domain.ports.outbound.ProductQueryRepositoryPort;
-import com.ConectaClick.marketplace.domain.ports.outbound.UserRepositoryPort;
+import com.conectaclick.marketplace.application.dto.PagedProductResponse;
+import com.conectaclick.marketplace.application.dto.ProductDTO;
+import com.conectaclick.marketplace.domain.model.Product;
+import com.conectaclick.marketplace.domain.model.User;
+import com.conectaclick.marketplace.domain.exceptions.UserNotFoundException;
+import com.conectaclick.marketplace.domain.exceptions.UnauthorizedAccessException;
+import com.conectaclick.marketplace.domain.ports.inbound.GetSellerProductsUseCase;
+import com.conectaclick.marketplace.domain.ports.outbound.CachePort;
+import com.conectaclick.marketplace.domain.ports.outbound.ProductQueryRepositoryPort;
+import com.conectaclick.marketplace.domain.ports.outbound.UserRepositoryPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

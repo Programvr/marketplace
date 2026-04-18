@@ -1,7 +1,7 @@
-package com.ConectaClick.marketplace.domain.ports.outbound;
+package com.conectaclick.marketplace.domain.ports.outbound;
 
-import com.ConectaClick.marketplace.domain.model.Product;
-import com.ConectaClick.marketplace.domain.model.Product.ProductStatus;
+import com.conectaclick.marketplace.domain.model.Product;
+import com.conectaclick.marketplace.domain.model.Product.ProductStatus;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
