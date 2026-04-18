@@ -1,7 +1,5 @@
 package com.conectaclick.marketplace.infrastructure.security;
 
-import com.conectaclick.marketplace.infrastructure.security.JwtAuthenticationFilter;
-import com.conectaclick.marketplace.infrastructure.security.JwtTokenUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
