@@ -74,7 +74,7 @@ class ProductQueryRepositoryAdapterTest {
         List<ProductEntity> entities = List.of(testProductEntity);
         List<Product> expectedProducts = List.of(testProduct);
         
-        when(jpaProductRepository.findBySellerId(sellerId, any(Pageable.class)))
+        when(jpaProductRepository.findBySellerId(eq(sellerId), any(Pageable.class)))
                 .thenReturn(entities);
         when(productPersistenceMapper.toDomain(testProductEntity))
                 .thenReturn(testProduct);
@@ -87,7 +87,7 @@ class ProductQueryRepositoryAdapterTest {
         assertEquals(expectedProducts.get(0).getId(), result.get(0).getId());
         assertEquals(expectedProducts.get(0).getName(), result.get(0).getName());
         
-        verify(jpaProductRepository).findBySellerId(sellerId, any(Pageable.class));
+        verify(jpaProductRepository).findBySellerId(eq(sellerId), any(Pageable.class));
         verify(productPersistenceMapper).toDomain(testProductEntity);
     }
 
@@ -96,7 +96,7 @@ class ProductQueryRepositoryAdapterTest {
         // Given
         List<ProductEntity> entities = List.of();
         
-        when(jpaProductRepository.findBySellerId(sellerId, any(Pageable.class)))
+        when(jpaProductRepository.findBySellerId(eq(sellerId), any(Pageable.class)))
                 .thenReturn(entities);
 
         // When
@@ -104,7 +104,7 @@ class ProductQueryRepositoryAdapterTest {
 
         // Then
         assertTrue(result.isEmpty());
-        verify(jpaProductRepository).findBySellerId(sellerId, any(Pageable.class));
+        verify(jpaProductRepository).findBySellerId(eq(sellerId), any(Pageable.class));
         verify(productPersistenceMapper, never()).toDomain(any());
     }
 
@@ -115,7 +115,7 @@ class ProductQueryRepositoryAdapterTest {
         List<ProductEntity> entities = List.of(testProductEntity);
         List<Product> expectedProducts = List.of(testProduct);
         
-        when(jpaProductRepository.findBySellerIdAndStatus(sellerId, com.conectaclick.marketplace.infrastructure.persistence.entities.enums.ProductStatus.ACTIVE, any(Pageable.class)))
+        when(jpaProductRepository.findBySellerIdAndStatus(eq(sellerId), eq(com.conectaclick.marketplace.infrastructure.persistence.entities.enums.ProductStatus.ACTIVE), any(Pageable.class)))
                 .thenReturn(entities);
         when(productPersistenceMapper.toDomain(testProductEntity))
                 .thenReturn(testProduct);
@@ -127,7 +127,7 @@ class ProductQueryRepositoryAdapterTest {
         assertEquals(expectedProducts.size(), result.size());
         assertEquals(expectedProducts.get(0).getId(), result.get(0).getId());
         
-        verify(jpaProductRepository).findBySellerIdAndStatus(sellerId, com.conectaclick.marketplace.infrastructure.persistence.entities.enums.ProductStatus.ACTIVE, any(Pageable.class));
+        verify(jpaProductRepository).findBySellerIdAndStatus(eq(sellerId), eq(com.conectaclick.marketplace.infrastructure.persistence.entities.enums.ProductStatus.ACTIVE), any(Pageable.class));
         verify(productPersistenceMapper).toDomain(testProductEntity);
     }
 
@@ -139,7 +139,7 @@ class ProductQueryRepositoryAdapterTest {
         List<ProductEntity> entities = List.of(testProductEntity);
         List<Product> expectedProducts = List.of(testProduct);
         
-        when(jpaProductRepository.findBySellerIdAndPriceBetween(sellerId, minPrice, maxPrice, any(Pageable.class)))
+        when(jpaProductRepository.findBySellerIdAndPriceBetween(eq(sellerId), eq(minPrice), eq(maxPrice), any(Pageable.class)))
                 .thenReturn(entities);
         when(productPersistenceMapper.toDomain(testProductEntity))
                 .thenReturn(testProduct);
@@ -151,7 +151,7 @@ class ProductQueryRepositoryAdapterTest {
         assertEquals(expectedProducts.size(), result.size());
         assertEquals(expectedProducts.get(0).getId(), result.get(0).getId());
         
-        verify(jpaProductRepository).findBySellerIdAndPriceBetween(sellerId, minPrice, maxPrice, any(Pageable.class));
+        verify(jpaProductRepository).findBySellerIdAndPriceBetween(eq(sellerId), eq(minPrice), eq(maxPrice), any(Pageable.class));
         verify(productPersistenceMapper).toDomain(testProductEntity);
     }
 
@@ -163,7 +163,7 @@ class ProductQueryRepositoryAdapterTest {
         List<ProductEntity> entities = List.of(testProductEntity);
         List<Product> expectedProducts = List.of(testProduct);
         
-        when(jpaProductRepository.findBySellerIdAndCreatedAtBetween(sellerId, startDate, endDate, any(Pageable.class)))
+        when(jpaProductRepository.findBySellerIdAndCreatedAtBetween(eq(sellerId), eq(startDate), eq(endDate), any(Pageable.class)))
                 .thenReturn(entities);
         when(productPersistenceMapper.toDomain(testProductEntity))
                 .thenReturn(testProduct);
@@ -175,7 +175,7 @@ class ProductQueryRepositoryAdapterTest {
         assertEquals(expectedProducts.size(), result.size());
         assertEquals(expectedProducts.get(0).getId(), result.get(0).getId());
         
-        verify(jpaProductRepository).findBySellerIdAndCreatedAtBetween(sellerId, startDate, endDate, any(Pageable.class));
+        verify(jpaProductRepository).findBySellerIdAndCreatedAtBetween(eq(sellerId), eq(startDate), eq(endDate), any(Pageable.class));
         verify(productPersistenceMapper).toDomain(testProductEntity);
     }
 
@@ -184,7 +184,7 @@ class ProductQueryRepositoryAdapterTest {
         // Given
         long expectedCount = 5L;
         
-        when(jpaProductRepository.countBySellerId(sellerId))
+        when(jpaProductRepository.countBySellerId(eq(sellerId)))
                 .thenReturn(expectedCount);
 
         // When
@@ -192,7 +192,7 @@ class ProductQueryRepositoryAdapterTest {
 
         // Then
         assertEquals(expectedCount, result);
-        verify(jpaProductRepository).countBySellerId(sellerId);
+        verify(jpaProductRepository).countBySellerId(eq(sellerId));
     }
 
     @Test
@@ -201,7 +201,7 @@ class ProductQueryRepositoryAdapterTest {
         ProductStatus status = ProductStatus.INACTIVE;
         long expectedCount = 3L;
         
-        when(jpaProductRepository.countBySellerIdAndStatus(sellerId, com.conectaclick.marketplace.infrastructure.persistence.entities.enums.ProductStatus.INACTIVE))
+        when(jpaProductRepository.countBySellerIdAndStatus(eq(sellerId), eq(com.conectaclick.marketplace.infrastructure.persistence.entities.enums.ProductStatus.INACTIVE)))
                 .thenReturn(expectedCount);
 
         // When
@@ -209,7 +209,7 @@ class ProductQueryRepositoryAdapterTest {
 
         // Then
         assertEquals(expectedCount, result);
-        verify(jpaProductRepository).countBySellerIdAndStatus(sellerId, com.conectaclick.marketplace.infrastructure.persistence.entities.enums.ProductStatus.INACTIVE);
+        verify(jpaProductRepository).countBySellerIdAndStatus(eq(sellerId), eq(com.conectaclick.marketplace.infrastructure.persistence.entities.enums.ProductStatus.INACTIVE));
     }
 
     @Test
@@ -219,7 +219,7 @@ class ProductQueryRepositoryAdapterTest {
         BigDecimal maxPrice = new BigDecimal("500.00");
         long expectedCount = 8L;
         
-        when(jpaProductRepository.countBySellerIdAndPriceBetween(sellerId, minPrice, maxPrice))
+        when(jpaProductRepository.countBySellerIdAndPriceBetween(eq(sellerId), eq(minPrice), eq(maxPrice)))
                 .thenReturn(expectedCount);
 
         // When
@@ -227,7 +227,7 @@ class ProductQueryRepositoryAdapterTest {
 
         // Then
         assertEquals(expectedCount, result);
-        verify(jpaProductRepository).countBySellerIdAndPriceBetween(sellerId, minPrice, maxPrice);
+        verify(jpaProductRepository).countBySellerIdAndPriceBetween(eq(sellerId), eq(minPrice), eq(maxPrice));
     }
 
     @Test
@@ -237,7 +237,7 @@ class ProductQueryRepositoryAdapterTest {
         LocalDateTime endDate = LocalDateTime.now();
         long expectedCount = 12L;
         
-        when(jpaProductRepository.countBySellerIdAndCreatedAtBetween(sellerId, startDate, endDate))
+        when(jpaProductRepository.countBySellerIdAndCreatedAtBetween(eq(sellerId), eq(startDate), eq(endDate)))
                 .thenReturn(expectedCount);
 
         // When
@@ -245,7 +245,7 @@ class ProductQueryRepositoryAdapterTest {
 
         // Then
         assertEquals(expectedCount, result);
-        verify(jpaProductRepository).countBySellerIdAndCreatedAtBetween(sellerId, startDate, endDate);
+        verify(jpaProductRepository).countBySellerIdAndCreatedAtBetween(eq(sellerId), eq(startDate), eq(endDate));
     }
 
     @Test
@@ -277,7 +277,7 @@ class ProductQueryRepositoryAdapterTest {
 
         List<ProductEntity> entities = List.of(testProductEntity, entity2);
         
-        when(jpaProductRepository.findBySellerId(sellerId, any(Pageable.class)))
+        when(jpaProductRepository.findBySellerId(eq(sellerId), any(Pageable.class)))
                 .thenReturn(entities);
         when(productPersistenceMapper.toDomain(testProductEntity))
                 .thenReturn(testProduct);
@@ -300,7 +300,7 @@ class ProductQueryRepositoryAdapterTest {
         // Given
         List<ProductEntity> entities = List.of(testProductEntity);
         
-        when(jpaProductRepository.findBySellerId(sellerId, any(Pageable.class)))
+        when(jpaProductRepository.findBySellerId(eq(sellerId), any(Pageable.class)))
                 .thenReturn(entities);
         when(productPersistenceMapper.toDomain(testProductEntity))
                 .thenReturn(testProduct);
@@ -310,7 +310,7 @@ class ProductQueryRepositoryAdapterTest {
 
         // Then
         assertFalse(result.isEmpty());
-        verify(jpaProductRepository).findBySellerId(sellerId, any(Pageable.class));
+        verify(jpaProductRepository).findBySellerId(eq(sellerId), any(Pageable.class));
     }
 
     @Test
@@ -320,7 +320,7 @@ class ProductQueryRepositoryAdapterTest {
         BigDecimal maxPrice = BigDecimal.ZERO;
         List<ProductEntity> entities = List.of();
         
-        when(jpaProductRepository.findBySellerIdAndPriceBetween(sellerId, minPrice, maxPrice, any(Pageable.class)))
+        when(jpaProductRepository.findBySellerIdAndPriceBetween(eq(sellerId), eq(minPrice), eq(maxPrice), any(Pageable.class)))
                 .thenReturn(entities);
 
         // When
@@ -328,7 +328,7 @@ class ProductQueryRepositoryAdapterTest {
 
         // Then
         assertTrue(result.isEmpty());
-        verify(jpaProductRepository).findBySellerIdAndPriceBetween(sellerId, minPrice, maxPrice, any(Pageable.class));
+        verify(jpaProductRepository).findBySellerIdAndPriceBetween(eq(sellerId), eq(minPrice), eq(maxPrice), any(Pageable.class));
     }
 
     @Test
@@ -338,7 +338,7 @@ class ProductQueryRepositoryAdapterTest {
         LocalDateTime endDate = LocalDateTime.now().minusDays(1); // Invalid range
         List<ProductEntity> entities = List.of();
         
-        when(jpaProductRepository.findBySellerIdAndCreatedAtBetween(sellerId, startDate, endDate, any(Pageable.class)))
+        when(jpaProductRepository.findBySellerIdAndCreatedAtBetween(eq(sellerId), eq(startDate), eq(endDate), any(Pageable.class)))
                 .thenReturn(entities);
 
         // When
@@ -346,7 +346,7 @@ class ProductQueryRepositoryAdapterTest {
 
         // Then
         assertTrue(result.isEmpty());
-        verify(jpaProductRepository).findBySellerIdAndCreatedAtBetween(sellerId, startDate, endDate, any(Pageable.class));
+        verify(jpaProductRepository).findBySellerIdAndCreatedAtBetween(eq(sellerId), eq(startDate), eq(endDate), any(Pageable.class));
     }
 
     @Test
@@ -356,7 +356,7 @@ class ProductQueryRepositoryAdapterTest {
             List<ProductEntity> entities = List.of(testProductEntity);
             com.conectaclick.marketplace.infrastructure.persistence.entities.enums.ProductStatus infraStatus = com.conectaclick.marketplace.infrastructure.persistence.entities.enums.ProductStatus.valueOf(domainStatus.name());
             
-            when(jpaProductRepository.findBySellerIdAndStatus(sellerId, infraStatus, any(Pageable.class)))
+            when(jpaProductRepository.findBySellerIdAndStatus(eq(sellerId), eq(infraStatus), any(Pageable.class)))
                     .thenReturn(entities);
             when(productPersistenceMapper.toDomain(testProductEntity))
                     .thenReturn(testProduct);
@@ -366,20 +366,20 @@ class ProductQueryRepositoryAdapterTest {
 
             // Then
             assertFalse(result.isEmpty());
-            verify(jpaProductRepository).findBySellerIdAndStatus(sellerId, infraStatus, any(Pageable.class));
+            verify(jpaProductRepository).findBySellerIdAndStatus(eq(sellerId), eq(infraStatus), any(Pageable.class));
         }
     }
 
     @Test
     void shouldHandleZeroCountResults() {
         // Given
-        when(jpaProductRepository.countBySellerId(sellerId))
+        when(jpaProductRepository.countBySellerId(eq(sellerId)))
                 .thenReturn(0L);
-        when(jpaProductRepository.countBySellerIdAndStatus(sellerId, com.conectaclick.marketplace.infrastructure.persistence.entities.enums.ProductStatus.ACTIVE))
+        when(jpaProductRepository.countBySellerIdAndStatus(eq(sellerId), eq(com.conectaclick.marketplace.infrastructure.persistence.entities.enums.ProductStatus.ACTIVE)))
                 .thenReturn(0L);
-        when(jpaProductRepository.countBySellerIdAndPriceBetween(sellerId, any(BigDecimal.class), any(BigDecimal.class)))
+        when(jpaProductRepository.countBySellerIdAndPriceBetween(eq(sellerId), any(BigDecimal.class), any(BigDecimal.class)))
                 .thenReturn(0L);
-        when(jpaProductRepository.countBySellerIdAndCreatedAtBetween(sellerId, any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(jpaProductRepository.countBySellerIdAndCreatedAtBetween(eq(sellerId), any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(0L);
 
         // When & Then
@@ -394,7 +394,7 @@ class ProductQueryRepositoryAdapterTest {
         // Given
         List<ProductEntity> entities = List.of(testProductEntity);
         
-        when(jpaProductRepository.findBySellerId(sellerId, any(Pageable.class)))
+        when(jpaProductRepository.findBySellerId(eq(sellerId), any(Pageable.class)))
                 .thenReturn(entities);
         when(productPersistenceMapper.toDomain(testProductEntity))
                 .thenReturn(null);
