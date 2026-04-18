@@ -1,4 +1,4 @@
-package com.ConectaClick.marketplace.shared.config;
+package com.conectaclick.marketplace.shared.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ComponentScan;

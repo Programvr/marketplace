@@ -1,8 +1,8 @@
-package com.ConectaClick.marketplace.infrastructure.persistence.mappers;
+package com.conectaclick.marketplace.infrastructure.persistence.mappers;
 
-import com.ConectaClick.marketplace.domain.model.Product;
-import com.ConectaClick.marketplace.infrastructure.persistence.entities.ProductEntity;
-import com.ConectaClick.marketplace.infrastructure.persistence.entities.enums.ProductStatus;
+import com.conectaclick.marketplace.domain.model.Product;
+import com.conectaclick.marketplace.infrastructure.persistence.entities.ProductEntity;
+import com.conectaclick.marketplace.infrastructure.persistence.entities.enums.ProductStatus;
 import org.springframework.stereotype.Component;
 
 @Component

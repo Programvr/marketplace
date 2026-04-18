@@ -1,7 +1,7 @@
-package com.ConectaClick.marketplace.infrastructure.web.controllers;
+package com.conectaclick.marketplace.infrastructure.web.controllers;
 
-import com.ConectaClick.marketplace.application.dto.PagedProductResponse;
-import com.ConectaClick.marketplace.domain.ports.inbound.GetSellerProductsUseCase;
+import com.conectaclick.marketplace.application.dto.PagedProductResponse;
+import com.conectaclick.marketplace.domain.ports.inbound.GetSellerProductsUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;

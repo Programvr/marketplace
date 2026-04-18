@@ -1,10 +1,10 @@
-package com.ConectaClick.marketplace.infrastructure.persistence.adapters;
+package com.conectaclick.marketplace.infrastructure.persistence.adapters;
 
-import com.ConectaClick.marketplace.domain.model.Product;
-import com.ConectaClick.marketplace.domain.ports.outbound.ProductRepositoryPort;
-import com.ConectaClick.marketplace.infrastructure.persistence.entities.ProductEntity;
-import com.ConectaClick.marketplace.infrastructure.persistence.mappers.ProductPersistenceMapper;
-import com.ConectaClick.marketplace.infrastructure.persistence.repositories.JpaProductRepository;
+import com.conectaclick.marketplace.domain.model.Product;
+import com.conectaclick.marketplace.domain.ports.outbound.ProductRepositoryPort;
+import com.conectaclick.marketplace.infrastructure.persistence.entities.ProductEntity;
+import com.conectaclick.marketplace.infrastructure.persistence.mappers.ProductPersistenceMapper;
+import com.conectaclick.marketplace.infrastructure.persistence.repositories.JpaProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import java.util.Optional;

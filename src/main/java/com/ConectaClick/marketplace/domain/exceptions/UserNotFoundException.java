@@ -1,4 +1,4 @@
-package com.ConectaClick.marketplace.domain.exceptions;
+package com.conectaclick.marketplace.domain.exceptions;
 
 public class UserNotFoundException extends RuntimeException {
     public UserNotFoundException(Long userId) {

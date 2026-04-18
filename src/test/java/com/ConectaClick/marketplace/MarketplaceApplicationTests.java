@@ -1,4 +1,4 @@
-package com.ConectaClick.marketplace;
+package com.conectaclick.marketplace;
 
 import org.junit.jupiter.api.Test;
 

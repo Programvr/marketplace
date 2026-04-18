@@ -1,4 +1,4 @@
-package com.ConectaClick.marketplace.infrastructure.config;
+package com.conectaclick.marketplace.infrastructure.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

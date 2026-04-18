@@ -1,6 +1,6 @@
-package com.ConectaClick.marketplace.domain.ports.inbound;
+package com.conectaclick.marketplace.domain.ports.inbound;
 
-import com.ConectaClick.marketplace.domain.model.Product;
+import com.conectaclick.marketplace.domain.model.Product;
 
 public interface CreateProductUseCase {
     Product execute(CreateProductCommand command);

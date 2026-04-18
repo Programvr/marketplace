@@ -1,6 +1,6 @@
-package com.ConectaClick.marketplace.infrastructure.nosql.adapters;
+package com.conectaclick.marketplace.infrastructure.nosql.adapters;
 
-import com.ConectaClick.marketplace.domain.ports.outbound.CachePort;
+import com.conectaclick.marketplace.domain.ports.outbound.CachePort;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

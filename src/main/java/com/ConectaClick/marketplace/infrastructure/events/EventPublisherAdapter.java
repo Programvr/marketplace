@@ -1,6 +1,6 @@
-package com.ConectaClick.marketplace.infrastructure.events;
+package com.conectaclick.marketplace.infrastructure.events;
 
-import com.ConectaClick.marketplace.domain.ports.outbound.EventPublisherPort;
+import com.conectaclick.marketplace.domain.ports.outbound.EventPublisherPort;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

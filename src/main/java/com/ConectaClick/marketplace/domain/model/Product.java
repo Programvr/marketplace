@@ -1,6 +1,6 @@
-package com.ConectaClick.marketplace.domain.model;
+package com.conectaclick.marketplace.domain.model;
 
-import com.ConectaClick.marketplace.domain.exceptions.ProductDomainException;
+import com.conectaclick.marketplace.domain.exceptions.ProductDomainException;
 import lombok.Builder;
 import lombok.Getter;
 import java.math.BigDecimal;

@@ -1,6 +1,6 @@
-package com.ConectaClick.marketplace.infrastructure.nosql.repositories;
+package com.conectaclick.marketplace.infrastructure.nosql.repositories;
 
-import com.ConectaClick.marketplace.infrastructure.nosql.entities.ActivityLogEntity;
+import com.conectaclick.marketplace.infrastructure.nosql.entities.ActivityLogEntity;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

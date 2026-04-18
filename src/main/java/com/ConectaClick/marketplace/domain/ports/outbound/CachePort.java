@@ -1,4 +1,4 @@
-package com.ConectaClick.marketplace.domain.ports.outbound;
+package com.conectaclick.marketplace.domain.ports.outbound;
 
 import java.util.Optional;
 import java.time.Duration;

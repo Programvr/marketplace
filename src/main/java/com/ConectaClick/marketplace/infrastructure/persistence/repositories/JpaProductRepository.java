@@ -1,7 +1,7 @@
-package com.ConectaClick.marketplace.infrastructure.persistence.repositories;
+package com.conectaclick.marketplace.infrastructure.persistence.repositories;
 
-import com.ConectaClick.marketplace.infrastructure.persistence.entities.ProductEntity;
-import com.ConectaClick.marketplace.infrastructure.persistence.entities.enums.ProductStatus;
+import com.conectaclick.marketplace.infrastructure.persistence.entities.ProductEntity;
+import com.conectaclick.marketplace.infrastructure.persistence.entities.enums.ProductStatus;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

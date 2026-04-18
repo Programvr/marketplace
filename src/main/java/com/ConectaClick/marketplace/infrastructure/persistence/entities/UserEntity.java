@@ -1,6 +1,6 @@
-package com.ConectaClick.marketplace.infrastructure.persistence.entities;
+package com.conectaclick.marketplace.infrastructure.persistence.entities;
 
-import com.ConectaClick.marketplace.infrastructure.persistence.entities.enums.UserType;
+import com.conectaclick.marketplace.infrastructure.persistence.entities.enums.UserType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

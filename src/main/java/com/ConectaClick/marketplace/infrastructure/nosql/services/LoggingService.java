@@ -1,7 +1,7 @@
-package com.ConectaClick.marketplace.infrastructure.nosql.services;
+package com.conectaclick.marketplace.infrastructure.nosql.services;
 
-import com.ConectaClick.marketplace.infrastructure.nosql.entities.ActivityLogEntity;
-import com.ConectaClick.marketplace.infrastructure.nosql.repositories.ActivityLogRepository;
+import com.conectaclick.marketplace.infrastructure.nosql.entities.ActivityLogEntity;
+import com.conectaclick.marketplace.infrastructure.nosql.repositories.ActivityLogRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

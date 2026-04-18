@@ -1,4 +1,4 @@
-package com.ConectaClick.marketplace;
+package com.conectaclick.marketplace;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,6 +1,6 @@
-package com.ConectaClick.marketplace.domain.ports.inbound;
+package com.conectaclick.marketplace.domain.ports.inbound;
 
-import com.ConectaClick.marketplace.application.dto.PagedProductResponse;
+import com.conectaclick.marketplace.application.dto.PagedProductResponse;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
