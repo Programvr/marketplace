@@ -1,4 +1,4 @@
-package com.ConectaClick.marketplace.infrastructure.config;
+package com.conectaclick.marketplace.infrastructure.config;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
