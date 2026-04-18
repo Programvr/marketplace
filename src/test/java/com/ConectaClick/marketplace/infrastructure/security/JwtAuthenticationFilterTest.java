@@ -271,4 +271,52 @@ class JwtAuthenticationFilterTest {
         assert SecurityContextHolder.getContext().getAuthentication() != null;
         assert SecurityContextHolder.getContext().getAuthentication().getName().equals(username);
     }
+
+    @Test
+    void shouldHandleVeryLongToken() throws ServletException, IOException {
+        // Given
+        String longToken = "very.long.jwt.token.with.many.parts.that.exceeds.normal.length.123456789";
+        when(request.getHeader("Authorization")).thenReturn("Bearer " + longToken);
+        when(jwtTokenUtil.getUsernameFromToken(longToken)).thenReturn("user");
+
+        // When
+        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
+
+        // Then
+        verify(filterChain).doFilter(request, response);
+        verify(jwtTokenUtil).getUsernameFromToken(longToken);
+        verify(jwtTokenUtil, never()).validateToken(any());
+    }
+
+    @Test
+    void shouldHandleTokenWithNumbersOnly() throws ServletException, IOException {
+        // Given
+        String numericToken = "123456789";
+        when(request.getHeader("Authorization")).thenReturn("Bearer " + numericToken);
+        when(jwtTokenUtil.getUsernameFromToken(numericToken)).thenReturn("numericuser");
+
+        // When
+        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
+
+        // Then
+        verify(filterChain).doFilter(request, response);
+        verify(jwtTokenUtil).getUsernameFromToken(numericToken);
+        verify(jwtTokenUtil, never()).validateToken(any());
+    }
+
+    @Test
+    void shouldHandleMultipleBearerPrefixes() throws ServletException, IOException {
+        // Given
+        String token = "Bearer Bearer token123";
+        when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
+        when(jwtTokenUtil.getUsernameFromToken(token)).thenReturn("user");
+
+        // When
+        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
+
+        // Then
+        verify(filterChain).doFilter(request, response);
+        verify(jwtTokenUtil).getUsernameFromToken(token);
+        verify(jwtTokenUtil, never()).validateToken(any());
+    }
 }
