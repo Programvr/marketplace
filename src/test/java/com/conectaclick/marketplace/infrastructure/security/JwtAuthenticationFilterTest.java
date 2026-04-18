@@ -7,6 +7,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -42,24 +44,11 @@ class JwtAuthenticationFilterTest {
         SecurityContextHolder.clearContext();
     }
 
-    @Test
-    void shouldDoFilterWhenNoAuthorizationHeader() throws ServletException, IOException {
+    @ParameterizedTest
+    @ValueSource(strings = {null, "Basic token123", "bearer token123"})
+    void shouldDoFilterWhenAuthorizationHeaderIsInvalid(String authorizationHeader) throws ServletException, IOException {
         // Given
-        when(request.getHeader("Authorization")).thenReturn(null);
-
-        // When
-        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
-
-        // Then
-        verify(filterChain).doFilter(request, response);
-        verify(jwtTokenUtil, never()).getUsernameFromToken(any());
-        verify(jwtTokenUtil, never()).validateToken(any());
-    }
-
-    @Test
-    void shouldDoFilterWhenAuthorizationHeaderDoesNotStartWithBearer() throws ServletException, IOException {
-        // Given
-        when(request.getHeader("Authorization")).thenReturn("Basic token123");
+        when(request.getHeader("Authorization")).thenReturn(authorizationHeader);
 
         // When
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
@@ -161,33 +150,20 @@ class JwtAuthenticationFilterTest {
         assert SecurityContextHolder.getContext().getAuthentication().getName().equals("existinguser");
     }
 
-    @Test
-    void shouldHandleEmptyToken() throws ServletException, IOException {
+    @ParameterizedTest
+    @ValueSource(strings = {"Bearer ", "Bearer null", "Bearer    token123"})
+    void shouldHandleInvalidTokenFormats(String authorizationHeader) throws ServletException, IOException {
         // Given
-        when(request.getHeader("Authorization")).thenReturn("Bearer ");
-        when(jwtTokenUtil.getUsernameFromToken("")).thenReturn(null);
+        String expectedToken = authorizationHeader.substring(7); // Remove "Bearer " prefix
+        when(request.getHeader("Authorization")).thenReturn(authorizationHeader);
+        when(jwtTokenUtil.getUsernameFromToken(expectedToken)).thenReturn(null);
 
         // When
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
         // Then
         verify(filterChain).doFilter(request, response);
-        verify(jwtTokenUtil).getUsernameFromToken("");
-        verify(jwtTokenUtil, never()).validateToken(any());
-    }
-
-    @Test
-    void shouldHandleNullToken() throws ServletException, IOException {
-        // Given
-        when(request.getHeader("Authorization")).thenReturn("Bearer null");
-        when(jwtTokenUtil.getUsernameFromToken("null")).thenReturn(null);
-
-        // When
-        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
-
-        // Then
-        verify(filterChain).doFilter(request, response);
-        verify(jwtTokenUtil).getUsernameFromToken("null");
+        verify(jwtTokenUtil).getUsernameFromToken(expectedToken);
         verify(jwtTokenUtil, never()).validateToken(any());
     }
 
@@ -321,35 +297,8 @@ class JwtAuthenticationFilterTest {
         verify(jwtTokenUtil, never()).validateToken(any());
     }
 
-    @Test
-    void shouldHandleBearerWithSpaces() throws ServletException, IOException {
-        // Given
-        when(request.getHeader("Authorization")).thenReturn("Bearer    token123");
-        when(jwtTokenUtil.getUsernameFromToken("   token123")).thenReturn(null);
-
-        // When
-        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
-
-        // Then
-        verify(filterChain).doFilter(request, response);
-        verify(jwtTokenUtil).getUsernameFromToken("   token123");
-        verify(jwtTokenUtil, never()).validateToken(any());
-    }
-
-    @Test
-    void shouldHandleCaseInsensitiveBearer() throws ServletException, IOException {
-        // Given
-        when(request.getHeader("Authorization")).thenReturn("bearer token123");
-
-        // When
-        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
-
-        // Then
-        verify(filterChain).doFilter(request, response);
-        verify(jwtTokenUtil, never()).getUsernameFromToken(any());
-        verify(jwtTokenUtil, never()).validateToken(any());
-    }
-
+    
+    
     @Test
     void shouldSetAuthenticationWithCorrectAuthorities() throws ServletException, IOException {
         // Given
