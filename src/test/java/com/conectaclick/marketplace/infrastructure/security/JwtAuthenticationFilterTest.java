@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -16,6 +17,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.IOException;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -45,7 +47,7 @@ class JwtAuthenticationFilterTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {null, "Basic token123", "bearer token123"})
+    @MethodSource("invalidAuthorizationHeaders")
     void shouldDoFilterWhenAuthorizationHeaderIsInvalid(String authorizationHeader) throws ServletException, IOException {
         // Given
         when(request.getHeader("Authorization")).thenReturn(authorizationHeader);
@@ -57,6 +59,10 @@ class JwtAuthenticationFilterTest {
         verify(filterChain).doFilter(request, response);
         verify(jwtTokenUtil, never()).getUsernameFromToken(any());
         verify(jwtTokenUtil, never()).validateToken(any());
+    }
+
+    static Stream<String> invalidAuthorizationHeaders() {
+        return Stream.of(null, "Basic token123", "bearer token123");
     }
 
     @Test
